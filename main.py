@@ -39,6 +39,10 @@ cars_data.dropna(inplace=True)
 
 
 cars_data.drop(['clean_title'], axis=1, inplace=True)
+cars_data.drop(['ext_col'], axis=1, inplace=True) # there are errors in the ds
+cars_data.drop(['int_col'], axis=1, inplace=True) # there are errors in the ds
+cars_data.drop(['model'], axis=1, inplace=True) # too many unique values does not make sense to change into numerical values
+
 
 def get_hp(engine):
     if not 'HP' in engine: #some engine values only contain the amount of liters 
@@ -68,11 +72,51 @@ def get_miles(mileage):
 cars_data['mileage'] = cars_data['mileage'].apply(get_miles)
 
 # replacing the values of the brand with numerical values
-cars_data['brand'].replace(['Ford' 'Hyundai' 'INFINITI' 'Audi' 'BMW' 'Lexus' 'Aston' 'Toyota'
- 'Lincoln' 'Land' 'Mercedes-Benz' 'Dodge' 'Nissan' 'Jaguar' 'Chevrolet'
- 'Kia' 'Jeep' 'Bentley' 'MINI' 'Porsche' 'Hummer' 'Chrysler' 'Acura'
- 'Volvo' 'Cadillac' 'Maserati' 'Genesis' 'Volkswagen' 'GMC' 'RAM' 'Subaru'
- 'Alfa' 'Ferrari' 'Scion' 'Mitsubishi' 'Mazda' 'Saturn' 'Honda' 'Bugatti'
- 'Lamborghini' 'Rolls-Royce' 'McLaren' 'Buick' 'Lotus' 'Pontiac' 'FIAT'
- 'Saab' 'Mercury' 'Plymouth' 'smart' 'Maybach' 'Suzuki'],
+# print(cars_data['brand'].nunique())
+cars_data['brand'].replace(['Ford', 'Hyundai', 'INFINITI', 'Audi', 'BMW', 'Lexus', 'Aston', 'Toyota',
+ 'Lincoln', 'Land', 'Mercedes-Benz', 'Dodge', 'Nissan', 'Jaguar', 'Chevrolet',
+ 'Kia', 'Jeep', 'Bentley', 'MINI', 'Porsche', 'Hummer', 'Chrysler', 'Acura',
+ 'Volvo', 'Cadillac', 'Maserati', 'Genesis', 'Volkswagen', 'GMC', 'RAM', 'Subaru',
+ 'Alfa', 'Ferrari', 'Scion', 'Mitsubishi', 'Mazda', 'Saturn', 'Honda', 'Bugatti',
+ 'Lamborghini', 'Rolls-Royce', 'McLaren', 'Buick', 'Lotus', 'Pontiac', 'FIAT',
+ 'Saab', 'Mercury', 'Plymouth', 'smart', 'Maybach', 'Suzuki'],
  [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52], inplace=True)
+
+
+# print(cars_data.fuel_type.value_counts())
+cars_data.fuel_type.replace(['Gasoline', 'Hybrid', 'E85 Flex Fuel', 'Diesel', 'Plug-In Hybrid'], [1,2,3,4,5], inplace=True)
+# print(cars_data.accident.value_counts())    
+cars_data.accident.replace(['None reported', 'At least 1 accident or damage reported'], [1,2], inplace=True)
+
+
+# splitting input vs output columns 
+input_data = cars_data.drop(['price'], axis=1)
+output_data = cars_data['price']
+
+
+# splitting the data into training and testing
+x_train, x_test, y_train, y_test = train_test_split(input_data, output_data, test_size=0.2) # 80% training, 20% testing
+
+# MODEL CREATION  - linear regression 
+
+model = LinearRegression()
+
+# training the model
+model.fit(x_train, y_train)
+
+predict = model.predict(x_test) # predicting the price of the cars
+# print(predict)
+
+
+# print(x_train.head(1))
+#       brand  model_year  mileage  fuel_type engine  accident
+# 3007      5        2016   185000          1    180         2
+
+
+input_data_model = pd.DataFrame({'brand': [5], 'model_year': [2016], 'mileage': [185000], 'fuel_type': [1], 'engine': [180], 'accident': [2]}) # should be 7500
+# print(model.predict(input_data_model)) - gave -20k, need to fix the model
+
+
+
+# import pickle as pk
+# pk.dump(model, open('model.pkl', 'wb')) # saving the model

@@ -123,7 +123,5 @@ input_data_model = pd.DataFrame({'brand': [5], 'model_year': [2016], 'mileage': 
 # made coefs. positive=True, now it returns 3950
 
 
-
-
 import pickle as pk
 pk.dump(model, open('model.pkl', 'wb')) # saving the model

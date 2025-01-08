@@ -99,7 +99,7 @@ x_train, x_test, y_train, y_test = train_test_split(input_data, output_data, tes
 
 # MODEL CREATION  - linear regression 
 
-model = LinearRegression()
+model = LinearRegression(positive=True)
 
 # training the model
 model.fit(x_train, y_train)
@@ -112,11 +112,18 @@ predict = model.predict(x_test) # predicting the price of the cars
 #       brand  model_year  mileage  fuel_type engine  accident
 # 3007      5        2016   185000          1    180         2
 
+#           brand  model_year  mileage  fuel_type engine  accident
+# 2482      8        2007   136000          1    273         1
+
+
 
 input_data_model = pd.DataFrame({'brand': [5], 'model_year': [2016], 'mileage': [185000], 'fuel_type': [1], 'engine': [180], 'accident': [2]}) # should be 7500
-# print(model.predict(input_data_model)) - gave -20k, need to fix the model
+# print(model.predict(input_data_model)) 
+# orginally gave -20k, need to fix the model
+# made coefs. positive=True, now it returns 3950
 
 
 
-# import pickle as pk
-# pk.dump(model, open('model.pkl', 'wb')) # saving the model
+
+import pickle as pk
+pk.dump(model, open('model.pkl', 'wb')) # saving the model

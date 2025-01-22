@@ -4,7 +4,7 @@ import pickle as pk
 import streamlit as st
 
 # Load the model
-model = pk.load(open('model.pkl', 'rb'))   
+model = pk.load(open('/model.pkl', 'rb'))   
 
 st.header('Car Prediction ML App')
 
